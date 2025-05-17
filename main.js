@@ -16,32 +16,36 @@ const svgLine = d3.select("#lineChart")
 d3.csv("weather.csv").then(data => {
     // --- CASE 1: FLATTEN ---
     // Determine your fields of interest:
-    // - X: Date
+    // - X: Year
     // - Y: Average Precipitation
     // - Category: City
 
     // 1.1: Rename and reformat
     data.forEach(d => {
-        d.year = new Date(d.date); // Parse dates and get year
+        d.year = new Date(d.date).getFullYear(); // Parse dates and get year
         d.precip = +d.average_precipitation; // Convert precipitation to numeric
-    }); 
+    });
 
     // Check your work:
-    console.log("=== CASE 1: FLATTEN ===");
+   // console.log("=== CASE 1: FLATTEN ===");
     console.log("Raw data:", data);
 
     // 1.2: Filter
-    /*
-        Don't make any filters. Set filtered data to be just be `data`.
-    */
-    const filteredData1 = "";// Your code here!
+    const filteredData1 = data; // Your code here!
 
     // Check your work:
     console.log("Filtered data 1:", filteredData1);
 
     // 1.3: GROUP AND AGGREGATE
     // "For each [CITY], each [YEAR], I want the {average of} [AVERAGE PRECIPITATION]."
-    const groupedData1 = "";// Your code here!
+    const groupedData1 = d3.groups(filteredData1,d=> d.city, d=>d.year) // Your code here!
+    .map(([city,years]) => ({
+        city,
+        values: years.map(([year,entries]) => ({
+            year,
+            avgPrecip: d3.mean(entries, d => d.precip)
+        }))
+    }));
     
     // Check your work:
     console.log("Grouped data 1:", groupedData1);
