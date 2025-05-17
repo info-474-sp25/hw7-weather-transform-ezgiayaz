@@ -57,11 +57,21 @@ d3.csv("weather.csv").then(data => {
             - Your y-variable (avgPrecipitation)
             - Your color variable (city)
     */
-    const flattenedData = "";// Your code here!
+    const flattenedData = groupedData1.flatMap(({city,values}) => // Your code here!
+        values.map(({year,avgPrecip}) => ({
+            year,
+            avgPrecip,
+            city
+        }))
+    );  
 
     // // Check your work:
     console.log("Final flattened data:", flattenedData);
-    console.log("---------------------------------------------------------------------");
+
+
+
+
+
 
     // --- CASE 2: PIVOT ---
     // 2.1: Rename and reformat
@@ -77,14 +87,13 @@ d3.csv("weather.csv").then(data => {
     });
 
     // Check your work:
-    console.log("=== CASE 2: PIVOT ===");
     console.log("Raw data:", data);
 
     // 2.2: Filter
     /*
         Filter the data to just the year of 2014.
     */
-    const filteredData2 = "";// Your code here!
+    const filteredData2 = data.filter(d => d.year === 2014);// Your code here!
 
     // Check your work:
     console.log("Filtered data 2:", filteredData2);
@@ -93,8 +102,13 @@ d3.csv("weather.csv").then(data => {
     /*
         "For each [MONTH], I want the {average of} [AVERAGE], [ACTUAL], and [RECORD PRECIPITATION]."
     */
-    const groupedData2 = "";// Your code here!
-
+    const groupedData2 = d3.groups(filteredData2, d => d.month) // Your code here!
+        .map(([month, entries]) => ({
+            month,
+            avgPrecip: d3.mean(entries, d => d.avgPrecip),
+            actualPrecip: d3.mean(entries, d => d.actualPrecip),
+            recordPrecip: d3.mean(entries, d => d.recordPrecip)
+        }));
     // Check your work:
     console.log("Grouped data 2:", groupedData2);
 
@@ -105,7 +119,11 @@ d3.csv("weather.csv").then(data => {
             - Y-variable (precipitation value)
             - Category (measurement type)
     */
-    const pivotedData = "";// Your code here!
+    const pivotedData = groupedData2.flatMap(({month, actualPrecip, avgPrecip, recordPrecip}) => [
+        { month, value: actualPrecip, type: "Actual Precipitation" },
+        { month, value: avgPrecip, type: "Average Precipitation" },
+        { month, value: recordPrecip, type: "Record Precipitation" }    
+    ]);// Your code here!
 
     // Check your work:
     console.log("Final pivoted data:", pivotedData);
